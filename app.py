@@ -925,17 +925,29 @@ elif menu == "📅 Eventos":
                 st.rerun()
     
     events = get_events()
+    search_events = st.text_input("🔍 Buscar eventos", placeholder="Nome, tipo, local ou descrição...", key="search_events")
+    if search_events:
+        events = events[
+            events['name'].str.contains(search_events, case=False, na=False) |
+            events['event_type'].str.contains(search_events, case=False, na=False) |
+            events['location'].str.contains(search_events, case=False, na=False) |
+            events['description'].str.contains(search_events, case=False, na=False)
+        ]
+
     with st.expander("📅 Visualização em Calendário", expanded=False):
         show_calendar_view(events)
     
-    for _, row in events.iterrows():
-        st.markdown(f"""
-        <div class="card-modern">
-            <h4>{row['name']}</h4>
-            <p><strong>Data:</strong> {row['start_date']} | <strong>Local:</strong> {row['location'] or 'N/A'}</p>
-            <p>{row['description']}</p>
-        </div>
-        """, unsafe_allow_html=True)
+    if events.empty:
+        st.info("Nenhum evento encontrado.")
+    else:
+        for _, row in events.iterrows():
+            st.markdown(f"""
+            <div class="card-modern">
+                <h4>{row['name']}</h4>
+                <p><strong>Data:</strong> {row['start_date']} | <strong>Local:</strong> {row['location'] or 'N/A'}</p>
+                <p>{row['description']}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
 # ===== KNOWLEDGE BASE =====
 elif menu == "📚 Knowledge Base":
@@ -1090,7 +1102,7 @@ elif menu == "📚 Knowledge Base":
                     st.download_button(label="📥 Baixar PDF", data=pdf_buffer, file_name=f"glossario_{datetime.now().strftime('%Y%m%d')}.pdf", mime="application/pdf")
         
         with col1:
-            search_term = st.text_input("🔍 Pesquisar termo", key="search_glossary")
+            search_term = st.text_input("🔍 Buscar no glossário", placeholder="Termo, definição, categoria ou exemplo...", key="search_glossary")
         
         with st.expander("➕ Novo Termo", expanded=False):
             with st.form("new_term"):
@@ -1107,7 +1119,12 @@ elif menu == "📚 Knowledge Base":
         
         glossary = get_glossary()
         if search_term:
-            glossary = glossary[glossary['term'].str.contains(search_term, case=False, na=False)]
+            glossary = glossary[
+                glossary['term'].str.contains(search_term, case=False, na=False) |
+                glossary['definition'].str.contains(search_term, case=False, na=False) |
+                glossary['category'].str.contains(search_term, case=False, na=False) |
+                glossary['example'].str.contains(search_term, case=False, na=False)
+            ]
         
         for _, row in glossary.iterrows():
             st.markdown(f"""
@@ -1134,16 +1151,27 @@ elif menu == "📚 Knowledge Base":
                                (title, category, summary, author))
                     conn.commit()
                     st.rerun()
-        
+
+        search_cases = st.text_input("🔍 Buscar case studies", placeholder="Título, categoria, autor ou resumo...", key="search_cases")
         cases = get_cases()
-        for _, row in cases.iterrows():
-            st.markdown(f"""
-            <div class="card-modern">
-                <h4>{row['title']}</h4>
-                <p><strong>Categoria:</strong> {row['category']} | <strong>Autor:</strong> {row['author'] or 'N/A'}</p>
-                <p>{row['summary']}</p>
-            </div>
-            """, unsafe_allow_html=True)
+        if search_cases:
+            cases = cases[
+                cases['title'].str.contains(search_cases, case=False, na=False) |
+                cases['category'].str.contains(search_cases, case=False, na=False) |
+                cases['author'].str.contains(search_cases, case=False, na=False) |
+                cases['summary'].str.contains(search_cases, case=False, na=False)
+            ]
+        if cases.empty:
+            st.info("Nenhum case study encontrado.")
+        else:
+            for _, row in cases.iterrows():
+                st.markdown(f"""
+                <div class="card-modern">
+                    <h4>{row['title']}</h4>
+                    <p><strong>Categoria:</strong> {row['category']} | <strong>Autor:</strong> {row['author'] or 'N/A'}</p>
+                    <p>{row['summary']}</p>
+                </div>
+                """, unsafe_allow_html=True)
 
 # ===== EMPRESAS TARGET =====
 elif menu == "🏢 Empresas Target":
@@ -1167,16 +1195,28 @@ elif menu == "🏢 Empresas Target":
                 conn.commit()
                 st.rerun()
     
+    search_company = st.text_input("🔍 Buscar empresas", placeholder="Nome, indústria, status ou contato...", key="search_company")
     companies = get_companies()
-    for _, row in companies.iterrows():
-        st.markdown(f"""
-        <div class="card-modern">
-            <h4>{row['name']}</h4>
-            <p><strong>Indústria:</strong> {row['industry']} | <strong>Status:</strong> {row['status']}</p>
-            <p><strong>Contato:</strong> {row['contact_person'] or 'N/A'}</p>
-            <p><em>{row['notes']}</em></p>
-        </div>
-        """, unsafe_allow_html=True)
+    if search_company:
+        companies = companies[
+            companies['name'].str.contains(search_company, case=False, na=False) |
+            companies['industry'].str.contains(search_company, case=False, na=False) |
+            companies['status'].str.contains(search_company, case=False, na=False) |
+            companies['contact_person'].str.contains(search_company, case=False, na=False) |
+            companies['notes'].str.contains(search_company, case=False, na=False)
+        ]
+    if companies.empty:
+        st.info("Nenhuma empresa encontrada.")
+    else:
+        for _, row in companies.iterrows():
+            st.markdown(f"""
+            <div class="card-modern">
+                <h4>{row['name']}</h4>
+                <p><strong>Indústria:</strong> {row['industry']} | <strong>Status:</strong> {row['status']}</p>
+                <p><strong>Contato:</strong> {row['contact_person'] or 'N/A'}</p>
+                <p><em>{row['notes']}</em></p>
+            </div>
+            """, unsafe_allow_html=True)
 
 # ===== SENIOR ADVISORS =====
 elif menu == "👥 Senior Advisors":
@@ -1197,16 +1237,27 @@ elif menu == "👥 Senior Advisors":
                 conn.commit()
                 st.rerun()
     
+    search_advisor = st.text_input("🔍 Buscar advisors", placeholder="Nome, expertise, empresa ou notas...", key="search_advisor")
     advisors = get_advisors()
-    for _, row in advisors.iterrows():
-        st.markdown(f"""
-        <div class="card-modern">
-            <h4>{row['name']}</h4>
-            <p><strong>Expertise:</strong> {row['expertise']} | <strong>Empresa:</strong> {row['company'] or 'N/A'}</p>
-            <p><strong>LinkedIn:</strong> <a href="{row['linkedin']}" target="_blank">{row['linkedin']}</a></p>
-            <p><em>{row['notes']}</em></p>
-        </div>
-        """, unsafe_allow_html=True)
+    if search_advisor:
+        advisors = advisors[
+            advisors['name'].str.contains(search_advisor, case=False, na=False) |
+            advisors['expertise'].str.contains(search_advisor, case=False, na=False) |
+            advisors['company'].str.contains(search_advisor, case=False, na=False) |
+            advisors['notes'].str.contains(search_advisor, case=False, na=False)
+        ]
+    if advisors.empty:
+        st.info("Nenhum senior advisor encontrado.")
+    else:
+        for _, row in advisors.iterrows():
+            st.markdown(f"""
+            <div class="card-modern">
+                <h4>{row['name']}</h4>
+                <p><strong>Expertise:</strong> {row['expertise']} | <strong>Empresa:</strong> {row['company'] or 'N/A'}</p>
+                <p><strong>LinkedIn:</strong> <a href="{row['linkedin']}" target="_blank">{row['linkedin']}</a></p>
+                <p><em>{row['notes']}</em></p>
+            </div>
+            """, unsafe_allow_html=True)
 
 st.markdown("---")
 st.caption("TaskSync v3.0 - Operations Strategy | Desenvolvido com Streamlit | Raíssa Azevedo - 2026")
