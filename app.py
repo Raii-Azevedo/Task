@@ -1260,4 +1260,4 @@ elif menu == "👥 Senior Advisors":
             """, unsafe_allow_html=True)
 
 st.markdown("---")
-st.caption("TaskSync v3.0 - Operations Strategy | Desenvolvido com Streamlit | Raíssa Azevedo - 2026")
+st.caption("TaskSync v3.0 - Operations Strategy | Raíssa Azevedo - 2026")
