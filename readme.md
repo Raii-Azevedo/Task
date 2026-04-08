@@ -75,9 +75,28 @@ python manage.py runserver
 
 Abrir: `http://127.0.0.1:8000/`
 
+## Controle de acesso
+
+- O sistema agora abre com tela de login antes do dashboard.
+- O login da aplicacao usa usuario e senha do Django, com `username` igual ao email corporativo.
+- Apenas emails `@artefact.com` cadastrados em `Authorized emails` no admin podem entrar.
+
+Fluxo recomendado para liberar acesso:
+
+1. Criar um superuser:
+
+```bash
+python manage.py createsuperuser
+```
+
+2. Entrar em `/admin/`.
+3. Cadastrar o email permitido em `Authorized emails`.
+4. Criar ou editar o usuario Django com `username` igual ao email liberado e definir uma senha.
+
 ## Rotas
 
 - `/` Dashboard
+- `/login/` Login
 - `/tasks/` Kanban
 - `/tasks/<id>/` Detalhes da tarefa
 - `/events/` Eventos

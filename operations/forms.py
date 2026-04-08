@@ -1,6 +1,8 @@
+from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 
 from .models import (
+    AuthorizedEmail,
     CaseStudy,
     Event,
     GlossaryTerm,
@@ -15,6 +17,36 @@ from .models import (
 
 class DateInput(forms.DateInput):
     input_type = "date"
+
+
+class CorporateEmailAuthenticationForm(AuthenticationForm):
+    username = forms.EmailField(
+        label="Email corporativo",
+        widget=forms.EmailInput(attrs={"autocomplete": "email", "autofocus": True}),
+    )
+    password = forms.CharField(
+        label="Senha",
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    )
+
+    allowed_domain = "artefact.com"
+
+    def clean(self):
+        username = self.cleaned_data.get("username", "").strip().lower()
+        password = self.cleaned_data.get("password")
+
+        if username:
+            self.cleaned_data["username"] = username
+
+        if username and password:
+            if not username.endswith(f"@{self.allowed_domain}"):
+                raise forms.ValidationError("Use um email corporativo @artefact.com.")
+
+            if not AuthorizedEmail.objects.filter(email__iexact=username, is_active=True).exists():
+                raise forms.ValidationError("Este email ainda nao esta autorizado no admin.")
+
+        return super().clean()
 
 
 class TaskForm(forms.ModelForm):

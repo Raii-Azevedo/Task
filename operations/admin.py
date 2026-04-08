@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+	AuthorizedEmail,
 	CaseStudy,
 	Event,
 	GlossaryTerm,
@@ -11,6 +12,13 @@ from .models import (
 	Whitepaper,
 	WhitepaperComment,
 )
+
+
+@admin.register(AuthorizedEmail)
+class AuthorizedEmailAdmin(admin.ModelAdmin):
+	list_display = ("email", "is_active", "created_at")
+	list_filter = ("is_active",)
+	search_fields = ("email", "notes")
 
 
 @admin.register(Task)

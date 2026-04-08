@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | TaskSync{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+    <p class="eyebrow">Corporate access</p>
+    <h1>Entre com seu email Artefact</h1>
+    <p class="lead">O acesso ao TaskSync fica disponivel apenas para emails autorizados no admin.</p>
+
+    <form method="post" class="stack-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <p>
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <span class="muted">{{ form.username.errors|join:', ' }}</span>
+            {% endif %}
+        </p>
+
+        <p>
+            <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <span class="muted">{{ form.password.errors|join:', ' }}</span>
+            {% endif %}
+        </p>
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button type="submit" class="full-button">Entrar</button>
+    </form>
+
+    <p class="help-text">Se o email ainda nao estiver liberado, um administrador precisa cadastrá-lo antes no painel do Django.</p>
+</section>
+{% endblock %}

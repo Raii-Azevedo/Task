@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.views import LoginView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -6,6 +7,7 @@ from django.utils import timezone
 
 from .forms import (
 	CaseStudyForm,
+	CorporateEmailAuthenticationForm,
 	EventForm,
 	GlossaryTermForm,
 	SeniorAdvisorForm,
@@ -16,6 +18,12 @@ from .forms import (
 	WhitepaperForm,
 )
 from .models import CaseStudy, Event, GlossaryTerm, SeniorAdvisor, TargetCompany, Task, Whitepaper
+
+
+class CorporateLoginView(LoginView):
+	authentication_form = CorporateEmailAuthenticationForm
+	template_name = "operations/login.html"
+	redirect_authenticated_user = True
 
 
 def _percent(count, total):

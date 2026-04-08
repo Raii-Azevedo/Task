@@ -9,6 +9,24 @@ class TimestampedModel(models.Model):
 		abstract = True
 
 
+class AuthorizedEmail(TimestampedModel):
+	email = models.EmailField(unique=True)
+	is_active = models.BooleanField(default=True)
+	notes = models.CharField(max_length=255, blank=True)
+
+	class Meta:
+		ordering = ["email"]
+		verbose_name = "Authorized email"
+		verbose_name_plural = "Authorized emails"
+
+	def __str__(self):
+		return self.email
+
+	def save(self, *args, **kwargs):
+		self.email = self.email.strip().lower()
+		super().save(*args, **kwargs)
+
+
 class Task(TimestampedModel):
 	class Category(models.TextChoices):
 		CHALLENGE = "challenge", "Challenge"
