@@ -125,3 +125,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+
+
+# Configure o CSRF para confiar no seu domínio do Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://tasksyncs.up.railway.app',
+    'http://tasksyncs.up.railway.app',
+]
+
+# Se quiser usar variável de ambiente (recomendado)
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
