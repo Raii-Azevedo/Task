@@ -62,9 +62,21 @@ default_postgres_url = (
     f"@{os.getenv('POSTGRES_HOST', 'localhost')}:{os.getenv('POSTGRES_PORT', '5432')}"
     f"/{os.getenv('POSTGRES_DB', 'tasksync')}"
 )
+explicit_postgres_config = any(
+    os.getenv(variable)
+    for variable in ("POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT")
+)
+default_database_url = os.getenv("DATABASE_URL")
+
+if not default_database_url:
+    if explicit_postgres_config:
+        default_database_url = default_postgres_url
+    else:
+        default_database_url = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', default_postgres_url),
+        default=default_database_url,
         conn_max_age=600,
         conn_health_checks=True,
     )

@@ -48,7 +48,12 @@ POSTGRES_PORT=5432
 # DATABASE_URL=postgresql://usuario:senha@localhost:5432/tasksync
 ```
 
-Sem `DATABASE_URL`, o projeto monta a conexao com PostgreSQL a partir das variaveis `POSTGRES_*`.
+Se `DATABASE_URL` estiver definido, ele sera usado como prioridade.
+
+Sem `DATABASE_URL`, o projeto se comporta assim:
+
+- Se alguma variavel `POSTGRES_*` estiver definida, o Django monta a conexao com PostgreSQL.
+- Se nenhuma configuracao de PostgreSQL existir, o ambiente local usa `db.sqlite3` automaticamente.
 
 4. Aplicar migracoes:
 
