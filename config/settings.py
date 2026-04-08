@@ -57,10 +57,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-default_sqlite_url = f"sqlite:///{(BASE_DIR / 'db.sqlite3').as_posix()}"
+default_postgres_url = (
+    f"postgresql://{os.getenv('POSTGRES_USER', 'postgres')}:{os.getenv('POSTGRES_PASSWORD', 'postgres')}"
+    f"@{os.getenv('POSTGRES_HOST', 'localhost')}:{os.getenv('POSTGRES_PORT', '5432')}"
+    f"/{os.getenv('POSTGRES_DB', 'tasksync')}"
+)
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', default_sqlite_url),
+        default=os.getenv('DATABASE_URL', default_postgres_url),
         conn_max_age=600,
         conn_health_checks=True,
     )

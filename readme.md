@@ -14,7 +14,7 @@ TaskSync foi migrado de Streamlit para Django com foco em manter os mesmos domin
 - Python 3.12+
 - Django 6+
 - dj-database-url
-- PostgreSQL (producao) ou SQLite (desenvolvimento)
+- PostgreSQL
 
 ## Estrutura Principal
 
@@ -39,11 +39,16 @@ pip install -r requirements.txt
 SECRET_KEY=sua-chave
 DEBUG=True
 ALLOWED_HOSTS=127.0.0.1,localhost
-# Producao (PostgreSQL)
+POSTGRES_DB=tasksync
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+# Alternativa: usar uma URL unica
 # DATABASE_URL=postgresql://usuario:senha@localhost:5432/tasksync
 ```
 
-Sem `DATABASE_URL`, o projeto usa SQLite em `db.sqlite3`.
+Sem `DATABASE_URL`, o projeto monta a conexao com PostgreSQL a partir das variaveis `POSTGRES_*`.
 
 4. Aplicar migracoes:
 
@@ -80,5 +85,5 @@ Abrir: `http://127.0.0.1:8000/`
 ## Notas da Migracao
 
 - O banco legado do Streamlit (`db.sqlite`) foi preservado.
-- O Django usa por padrao `db.sqlite3` para evitar conflito de schema.
+- O Django agora usa PostgreSQL como banco padrao.
 - O arquivo `app.py` antigo permanece no repositorio apenas como referencia.
