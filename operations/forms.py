@@ -1,4 +1,3 @@
-from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 
 from .models import (
@@ -19,34 +18,28 @@ class DateInput(forms.DateInput):
     input_type = "date"
 
 
-class CorporateEmailAuthenticationForm(AuthenticationForm):
-    username = forms.EmailField(
+class CorporateEmailAuthenticationForm(forms.Form):
+    email = forms.EmailField(
         label="Email corporativo",
         widget=forms.EmailInput(attrs={"autocomplete": "email", "autofocus": True}),
-    )
-    password = forms.CharField(
-        label="Senha",
-        strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
     )
 
     allowed_domain = "artefact.com"
 
     def clean(self):
-        username = self.cleaned_data.get("username", "").strip().lower()
-        password = self.cleaned_data.get("password")
+        email = self.cleaned_data.get("email", "").strip().lower()
 
-        if username:
-            self.cleaned_data["username"] = username
+        if email:
+            self.cleaned_data["email"] = email
 
-        if username and password:
-            if not username.endswith(f"@{self.allowed_domain}"):
+        if email:
+            if not email.endswith(f"@{self.allowed_domain}"):
                 raise forms.ValidationError("Use um email corporativo @artefact.com.")
 
-            if not AuthorizedEmail.objects.filter(email__iexact=username, is_active=True).exists():
+            if not AuthorizedEmail.objects.filter(email__iexact=email, is_active=True).exists():
                 raise forms.ValidationError("Este email ainda nao esta autorizado no admin.")
 
-        return super().clean()
+        return self.cleaned_data
 
 
 class TaskForm(forms.ModelForm):

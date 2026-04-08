@@ -78,7 +78,7 @@ Abrir: `http://127.0.0.1:8000/`
 ## Controle de acesso
 
 - O sistema agora abre com tela de login antes do dashboard.
-- O login da aplicacao usa usuario e senha do Django, com `username` igual ao email corporativo.
+- O login da aplicacao usa apenas o email corporativo cadastrado.
 - Apenas emails `@artefact.com` cadastrados em `Authorized emails` no admin podem entrar.
 
 Fluxo recomendado para liberar acesso:
@@ -91,7 +91,7 @@ python manage.py createsuperuser
 
 2. Entrar em `/admin/`.
 3. Cadastrar o email permitido em `Authorized emails`.
-4. Criar ou editar o usuario Django com `username` igual ao email liberado e definir uma senha.
+4. O usuario Django e criado automaticamente no primeiro acesso, sem senha local.
 
 ## Rotas
 

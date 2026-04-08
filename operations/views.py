@@ -1,9 +1,12 @@
 from django.contrib import messages
-from django.contrib.auth.views import LoginView
+from django.contrib.auth import get_user_model, login
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.generic.edit import FormView
 
 from .forms import (
 	CaseStudyForm,
@@ -20,10 +23,46 @@ from .forms import (
 from .models import CaseStudy, Event, GlossaryTerm, SeniorAdvisor, TargetCompany, Task, Whitepaper
 
 
-class CorporateLoginView(LoginView):
-	authentication_form = CorporateEmailAuthenticationForm
+class CorporateLoginView(FormView):
+	form_class = CorporateEmailAuthenticationForm
 	template_name = "operations/login.html"
-	redirect_authenticated_user = True
+	success_url = reverse_lazy("dashboard")
+
+	def dispatch(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			return redirect(self.get_success_url())
+		return super().dispatch(request, *args, **kwargs)
+
+	def form_valid(self, form):
+		email = form.cleaned_data["email"]
+		user_model = get_user_model()
+		user, created = user_model.objects.get_or_create(
+			username=email,
+			defaults={"email": email},
+		)
+
+		updated_fields = []
+		if user.email != email:
+			user.email = email
+			updated_fields.append("email")
+		if created:
+			user.set_unusable_password()
+			updated_fields.append("password")
+		if updated_fields:
+			user.save(update_fields=updated_fields)
+
+		login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
+		return HttpResponseRedirect(self.get_success_url())
+
+	def get_success_url(self):
+		redirect_to = self.request.POST.get("next") or self.request.GET.get("next")
+		if redirect_to and url_has_allowed_host_and_scheme(
+			url=redirect_to,
+			allowed_hosts={self.request.get_host()},
+			require_https=self.request.is_secure(),
+		):
+			return redirect_to
+		return str(self.success_url)
 
 
 def _percent(count, total):

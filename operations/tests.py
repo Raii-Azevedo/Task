@@ -7,13 +7,7 @@ from .models import AuthorizedEmail
 
 class AuthenticationFlowTests(TestCase):
 	def setUp(self):
-		self.password = "SecurePass123!"
 		self.email = "nome.sobrenome@artefact.com"
-		self.user = get_user_model().objects.create_user(
-			username=self.email,
-			email=self.email,
-			password=self.password,
-		)
 
 	def test_dashboard_requires_login(self):
 		response = self.client.get(reverse("dashboard"))
@@ -25,31 +19,38 @@ class AuthenticationFlowTests(TestCase):
 
 		response = self.client.post(
 			reverse("login"),
-			{"username": self.email, "password": self.password},
+			{"email": self.email},
 		)
 
 		self.assertRedirects(response, reverse("dashboard"))
+		user = get_user_model().objects.get(username=self.email)
+		self.assertEqual(user.email, self.email)
+		self.assertFalse(user.has_usable_password())
 
 	def test_login_requires_authorized_email(self):
 		response = self.client.post(
 			reverse("login"),
-			{"username": self.email, "password": self.password},
+			{"email": self.email},
 		)
 
 		self.assertContains(response, "Este email ainda nao esta autorizado no admin.")
 
 	def test_login_rejects_non_corporate_email(self):
 		external_email = "pessoa@gmail.com"
-		get_user_model().objects.create_user(
-			username=external_email,
-			email=external_email,
-			password=self.password,
-		)
 		AuthorizedEmail.objects.create(email=external_email)
 
 		response = self.client.post(
 			reverse("login"),
-			{"username": external_email, "password": self.password},
+			{"email": external_email},
 		)
 
 		self.assertContains(response, "Use um email corporativo @artefact.com.")
+
+	def test_existing_user_can_login_without_password(self):
+		get_user_model().objects.create_user(username=self.email, email="")
+		AuthorizedEmail.objects.create(email=self.email)
+
+		response = self.client.post(reverse("login"), {"email": self.email})
+
+		self.assertRedirects(response, reverse("dashboard"))
+		self.assertEqual(get_user_model().objects.get(username=self.email).email, self.email)
