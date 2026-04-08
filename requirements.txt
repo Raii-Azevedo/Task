@@ -1,4 +1,11 @@
-django
-dj-database-url
-psycopg2-binary
-python-dotenv
+Django==5.0.6
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+gunicorn==22.0.0
+whitenoise==6.7.0
+django-htmx==1.18.0
+django-bootstrap5==24.2
+pillow==10.3.0
+pandas==2.2.2
+openpyxl==3.1.2
+dj-database-url==2.1.0
