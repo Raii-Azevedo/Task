@@ -75,6 +75,20 @@ python manage.py runserver
 
 Abrir: `http://127.0.0.1:8000/`
 
+## Deploy e arquivos estaticos
+
+- Em producao com `gunicorn`, o Django nao serve estaticos sozinho.
+- Este projeto usa `whitenoise` para servir `/static/` pelo proprio app.
+- O deploy precisa executar `collectstatic` antes de subir a aplicacao.
+
+Exemplo de comando:
+
+```bash
+python manage.py collectstatic --noinput
+```
+
+Se estiver usando Railway, configure isso no build command ou no fluxo de deploy antes do processo `web`.
+
 ## Controle de acesso
 
 - O sistema agora abre com tela de login antes do dashboard.
