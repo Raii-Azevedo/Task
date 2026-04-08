@@ -1,9 +1,13 @@
+{% load static %}
 {% extends 'base.html' %}
 
 {% block title %}Login | TaskSync{% endblock %}
 
 {% block content %}
 <section class="auth-card">
+    <div class="auth-logo-wrap">
+        <img src="{% static 'operations/logo.png' %}" alt="Artefact" class="auth-logo">
+    </div>
     <p class="eyebrow">Corporate access</p>
     <h3>Entre com seu email Artefact</h3>
     <p class="lead">O acesso ao TaskSync fica disponivel apenas para emails autorizados no admin.</p>

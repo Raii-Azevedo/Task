@@ -186,9 +186,28 @@ form p {
     backdrop-filter: blur(16px);
 }
 
+.auth-logo-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+}
+
+.auth-logo {
+    display: block;
+    max-width: min(100%, 220px);
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
 .auth-card h1 {
     margin: 0.35rem 0 0.75rem;
     font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.auth-card h3 {
+    margin: 0.35rem 0 0.75rem;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
 }
 
 .auth-card form {
