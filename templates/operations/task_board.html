@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Kanban | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <p class="eyebrow">Kanban</p>
+        <h1>Iniciativas, prazos e owners em um fluxo editavel.</h1>
+    </div>
+    <form method="get" class="search-form">
+        <input type="search" name="q" value="{{ query }}" placeholder="Buscar por titulo, owner, descricao ou tags">
+        <button type="submit">Buscar</button>
+    </form>
+</section>
+
+<section class="layout-two">
+    <article class="panel sticky-panel">
+        <div class="panel-head">
+            <h2>Nova iniciativa</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ create_form.as_p }}
+            <button type="submit" name="create_task">Salvar iniciativa</button>
+        </form>
+    </article>
+
+    <section class="kanban-grid">
+        <article class="kanban-column">
+            <div class="column-head">
+                <h2>To Do</h2>
+                <span>{{ todo_tasks|length }}</span>
+            </div>
+            {% for task in todo_tasks %}
+                <div class="content-card">
+                    <div class="badge-row">
+                        <span class="pill {{ task.priority|slugify }}">{{ task.priority }}</span>
+                        <span class="pill neutral">{{ task.category }}</span>
+                    </div>
+                    <h3>{{ task.title }}</h3>
+                    <p>{{ task.description|default:'Sem descricao.'|truncatechars:110 }}</p>
+                    <div class="meta-line">
+                        <span>{{ task.owner_name|default:'Sem owner' }}</span>
+                        <span>{% if task.due_date %}{{ task.due_date|date:'d/m/Y' }}{% else %}Sem prazo{% endif %}</span>
+                    </div>
+                    <div class="tag-row">
+                        {% for tag in task.tag_list %}<span>{{ tag }}</span>{% endfor %}
+                    </div>
+                    <div class="action-row">
+                        <a href="{% url 'task_detail' task.pk %}">Detalhes</a>
+                        <form method="post" action="{% url 'delete_task' task.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="ghost danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhuma tarefa nesta coluna.</p>
+            {% endfor %}
+        </article>
+
+        <article class="kanban-column">
+            <div class="column-head">
+                <h2>In Progress</h2>
+                <span>{{ in_progress_tasks|length }}</span>
+            </div>
+            {% for task in in_progress_tasks %}
+                <div class="content-card emphasis">
+                    <div class="badge-row">
+                        <span class="pill accent">{{ task.priority }}</span>
+                        <span class="pill neutral">{{ task.progress }}%</span>
+                    </div>
+                    <h3>{{ task.title }}</h3>
+                    <p>{{ task.description|default:'Sem descricao.'|truncatechars:110 }}</p>
+                    <div class="meta-line">
+                        <span>{{ task.owner_name|default:'Sem owner' }}</span>
+                        <span>{% if task.start_date %}Inicio {{ task.start_date|date:'d/m/Y' }}{% endif %}</span>
+                    </div>
+                    <a href="{% url 'task_detail' task.pk %}" class="inline-link">Atualizar progresso</a>
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhuma tarefa em andamento.</p>
+            {% endfor %}
+        </article>
+
+        <article class="kanban-column">
+            <div class="column-head">
+                <h2>Done</h2>
+                <span>{{ done_tasks|length }}</span>
+            </div>
+            {% for task in done_tasks %}
+                <div class="content-card success-card">
+                    <div class="badge-row">
+                        <span class="pill success">Concluida</span>
+                    </div>
+                    <h3>{{ task.title }}</h3>
+                    <p>Finalizada em {% if task.completed_date %}{{ task.completed_date|date:'d/m/Y' }}{% else %}data nao registrada{% endif %}.</p>
+                    <a href="{% url 'task_detail' task.pk %}" class="inline-link">Abrir historico</a>
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhuma entrega concluida.</p>
+            {% endfor %}
+        </article>
+    </section>
+</section>
+{% endblock %}

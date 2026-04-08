@@ -1,8 +1,4 @@
-streamlit
-pandas
+django
+dj-database-url
 psycopg2-binary
 python-dotenv
-sqlalchemy
-plotly
-reportlab
-openpyxl

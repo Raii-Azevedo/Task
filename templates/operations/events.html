@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Eventos | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <p class="eyebrow">Eventos do setor</p>
+        <h1>Mapa de conferencias, webinars e workshops.</h1>
+    </div>
+    <form method="get" class="search-form">
+        <input type="search" name="q" value="{{ query }}" placeholder="Buscar por nome, tipo, local ou descricao">
+        <button type="submit">Buscar</button>
+    </form>
+</section>
+
+<section class="layout-two">
+    <article class="panel sticky-panel">
+        <div class="panel-head">
+            <h2>Novo evento</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Salvar evento</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Agenda cadastrada</h2>
+        </div>
+        <div class="card-grid">
+            {% for event in events %}
+                <div class="content-card">
+                    <p class="pill neutral">{{ event.event_type|default:'evento' }}</p>
+                    <h3>{{ event.name }}</h3>
+                    <p>{{ event.description|default:'Sem descricao.' }}</p>
+                    <div class="meta-line">
+                        <span>{{ event.location|default:'Local a definir' }}</span>
+                        <span>{% if event.start_date %}{{ event.start_date|date:'d/m/Y' }}{% else %}Sem data{% endif %}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhum evento encontrado.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

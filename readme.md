@@ -1,322 +1,84 @@
-# 🎯 TaskSync - Operations Strategy Platform
+# TaskSync - Django Migration
 
-![TaskSync Banner](https://github.com/Raii-Azevedo/ATF-Task/blob/main/logo.png)
+TaskSync foi migrado de Streamlit para Django com foco em manter os mesmos dominos de negocio:
 
-Plataforma completa para gestão de operações, desafios estratégicos, próximos passos e knowledge base, desenvolvida com Streamlit e PostgreSQL.
+- Dashboard estrategico
+- Kanban de iniciativas
+- Eventos do setor
+- Knowledge base (whitepapers, glossario, case studies)
+- Empresas target
+- Senior advisors
 
----
+## Stack
 
-## 📋 Sobre o Projeto
+- Python 3.12+
+- Django 6+
+- dj-database-url
+- PostgreSQL (producao) ou SQLite (desenvolvimento)
 
-O **TaskSync Operations** é uma ferramenta de gestão estratégica desenvolvida para times de operações que precisam:
+## Estrutura Principal
 
-- 📊 Gerenciar iniciativas e desafios
-- ⏰ Acompanhar próximos passos e prazos
-- 📚 Manter uma base de conhecimento organizada
-- 📅 Mapear eventos do setor
-- 🤝 Gerenciar relacionamento com empresas target e senior advisors
+- `config/`: configuracao do projeto Django
+- `operations/`: app principal com models, forms, views, urls e admin
+- `templates/operations/`: telas server-rendered
+- `static/operations/`: estilos globais
+- `operations/management/commands/seed_demo_data.py`: seed de dados de exemplo
 
----
+## Como Rodar
 
-## ✨ Funcionalidades
+1. Criar e ativar ambiente virtual.
+2. Instalar dependencias:
 
-### 📊 Dashboard Estratégico
-- Visão geral de todas as iniciativas
-- Métricas de conclusão e progresso
-- Gráficos por categoria e prioridade
-- Próximos eventos em destaque
-- Contagem regressiva para prazos
-
-### 📋 Kanban de Iniciativas
-- Gestão visual de tarefas (To Do, In Progress, Done)
-- Prioridades (Alta, Média, Baixa)
-- Categorias: challenges, next_steps, tools, whitepapers
-- Datas limite com alertas visuais
-- CRUD completo (criar, editar, excluir)
-
-### 📅 Eventos do Setor
-- Cadastro de eventos com datas
-- Filtros por tipo, indústria e status
-- Contagem regressiva automática
-- Destaque para eventos próximos
-
-### 📚 Knowledge Base
-- **Whitepapers**: Gestão de documentos técnicos
-- **Glossário**: Termos e definições do setor
-- **Case Studies**: Exemplos práticos e resultados
-
-### 🏢 Empresas Target
-- Pipeline de relacionamento com empresas
-- Status: prospect, contacted, meeting, proposal, closed
-- Informações de contato e valor potencial
-
-### 👥 Senior Advisors
-- Mapeamento de influenciadores do setor
-- Expertise, tópicos e eventos
-- Links para LinkedIn
-
----
-
-## 🚀 Tecnologias Utilizadas
-
-| Tecnologia | Versão | Uso |
-|------------|--------|-----|
-| Streamlit | 1.28+ | Framework web |
-| Python | 3.9+ | Linguagem principal |
-| PostgreSQL | 14+ | Banco de dados (produção) |
-| SQLite | 3.x | Banco de dados (desenvolvimento) |
-| Pandas | 2.0+ | Manipulação de dados |
-| psycopg2-binary | 2.9+ | Driver PostgreSQL |
-| SQLAlchemy | 2.0+ | ORM (opcional) |
-| python-dotenv | 1.0+ | Variáveis de ambiente |
-
----
-
-## 📦 Instalação
-
-### Pré-requisitos
-- Python 3.9 ou superior
-- pip (gerenciador de pacotes)
-- Git
-
-### Passo a Passo
-
-1. **Clone o repositório**
-   ```bash
-   git clone https://github.com/seu-usuario/tasksync-operations.git
-   cd tasksync-operations
-Crie um ambiente virtual
-
-bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
-Instale as dependências
-
-bash
+```bash
 pip install -r requirements.txt
-Configure as variáveis de ambiente
+```
 
-Crie um arquivo .env na raiz do projeto:
+3. (Opcional) Configurar `.env`:
 
-env
-# Para PostgreSQL (produção)
-DATABASE_URL=postgresql://usuario:senha@localhost:5432/tasksync_db
+```env
+SECRET_KEY=sua-chave
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost
+# Producao (PostgreSQL)
+# DATABASE_URL=postgresql://usuario:senha@localhost:5432/tasksync
+```
 
-# Para SQLite (desenvolvimento)
-# DATABASE_URL=sqlite:///db.sqlite
-Inicialize o banco de dados
+Sem `DATABASE_URL`, o projeto usa SQLite em `db.sqlite3`.
 
-bash
-python database.py
-Execute a aplicação
+4. Aplicar migracoes:
 
-bash
-streamlit run app.py
-Acesse no navegador
+```bash
+python manage.py migrate
+```
 
-text
-http://localhost:8501
-📁 Estrutura do Projeto
-text
-tasksync-operations/
-├── app.py                 # Aplicação principal (frontend + lógica)
-├── database.py            # Configuração do banco de dados
-├── requirements.txt       # Dependências do projeto
-├── .env                   # Variáveis de ambiente (não versionar)
-├── .gitignore             # Arquivos ignorados pelo git
-├── README.md              # Documentação
-└── db.sqlite              # Banco SQLite (gerado automaticamente)
-📄 Arquivo requirements.txt
-txt
-streamlit==1.28.0
-pandas==2.0.3
-psycopg2-binary==2.9.7
-python-dotenv==1.0.0
-sqlalchemy==2.0.19
-🔧 Configuração do Banco de Dados
-SQLite (Desenvolvimento)
-python
-# database.py
-DATABASE_URL = "sqlite:///db.sqlite"
-PostgreSQL (Produção)
-python
-# database.py
-import os
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://usuario:senha@localhost:5432/tasksync")
-🚀 Deploy no Railway
-Passo 1: Prepare o repositório
-bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/seu-usuario/tasksync-operations.git
-git push -u origin main
-Passo 2: Configure no Railway
-Acesse railway.app
+5. Popular com dados de exemplo:
 
-Clique em "New Project" → "Deploy from GitHub"
+```bash
+python manage.py seed_demo_data
+```
 
-Selecione seu repositório
+6. Executar servidor:
 
-Adicione um banco PostgreSQL
+```bash
+python manage.py runserver
+```
 
-O Railway configurará automaticamente a variável DATABASE_URL
+Abrir: `http://127.0.0.1:8000/`
 
-Passo 3: Deploy automático
-A cada push no repositório, o Railway faz deploy automático.
+## Rotas
 
-🎨 Design System
-Cores
-Primária: #0A2647 (azul escuro - confiança)
+- `/` Dashboard
+- `/tasks/` Kanban
+- `/tasks/<id>/` Detalhes da tarefa
+- `/events/` Eventos
+- `/knowledge/whitepapers/` Whitepapers
+- `/knowledge/glossary/` Glossario
+- `/knowledge/case-studies/` Case studies
+- `/companies/` Empresas target
+- `/advisors/` Senior advisors
 
-Secundária: #2C5F8A (azul médio - tecnologia)
+## Notas da Migracao
 
-Sucesso: #2E7D32 (verde - concluído)
-
-Atenção: #F57C00 (laranja - médio)
-
-Urgente: #B71C1C (vermelho - alta prioridade)
-
-Cards
-Fundo branco com borda suave
-
-Sombra sutil
-
-Efeito hover
-
-Bordas arredondadas (8px)
-
-Tipografia
-Fonte: Inter (sans-serif)
-
-Títulos: negrito
-
-Texto: regular
-
-📱 Responsividade
-O app se adapta automaticamente a diferentes tamanhos de tela:
-
-Desktop (> 1200px): Layout em múltiplas colunas
-
-Tablet (768px - 1199px): Colunas ajustadas
-
-Mobile (< 768px): Layout em coluna única
-
-🔒 Segurança
-✅ Variáveis de ambiente para dados sensíveis
-
-✅ Prepared statements contra SQL injection
-
-✅ Session state para controle de edição
-
-✅ Validação de dados nos formulários
-
-✅ Sanitização de inputs
-
-🤝 Como Contribuir
-Fork o projeto
-
-Crie uma branch (git checkout -b feature/nova-funcionalidade)
-
-Commit suas mudanças (git commit -m 'Adiciona nova funcionalidade')
-
-Push para a branch (git push origin feature/nova-funcionalidade)
-
-Abra um Pull Request
-
-🐛 Reportando Bugs
-Encontrou um bug? Abra uma issue com:
-
-Descrição do problema
-
-Passos para reproduzir
-
-Comportamento esperado
-
-Screenshots (se aplicável)
-
-📄 Licença
-Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
-
-text
-MIT License
-
-Copyright (c) 2026 Raíssa Azevedo
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files...
-✨ Autora
-Raíssa Azevedo
-
-Desenvolvimento Full Stack
-
-Arquitetura de Software
-
-UX/UI Design
-
-🙏 Agradecimentos
-Streamlit - Framework incrível
-
-Railway - Hospedagem simplificada
-
-PostgreSQL - Banco de dados robusto
-
-Comunidade open source pelas bibliotecas
-
-📊 Roadmap
-Versão 2.0 (Atual) ✅
-Dashboard estratégico
-
-Kanban completo
-
-Gestão de eventos
-
-Knowledge Base
-
-CRUD em todas as seções
-
-Buscadores
-
-Contagem regressiva
-
-Versão 2.1 (Próxima) 🚧
-Autenticação de usuários
-
-Relatórios exportáveis (PDF/Excel)
-
-Notificações por email
-
-Integração com Google Calendar
-
-API REST
-
-Versão 3.0 (Futuro) 🎯
-App mobile (React Native)
-
-IA para recomendações
-
-Chat integrado
-
-Analytics avançado
-
-📞 Contato
-Email: raissa.azevedo@email.com
-
-LinkedIn: linkedin.com/in/raissa-azevedo
-
-GitHub: github.com/raissa-azevedo
-
-⚡ Quick Start (1 minuto)
-bash
-# Clone e execute em segundos
-git clone https://github.com/seu-usuario/tasksync-operations.git
-cd tasksync-operations
-pip install -r requirements.txt
-streamlit run app.py
-<div align="center"> <br> <img src="https://github.com/Raii-Azevedo/ATF-Task/blob/main/logo.png" alt="TaskSync Logo"> <br> <br> <p><strong>Versão 2.0</strong> - Março 2026</p> <p>Desenvolvido com ❤️ para gestão estratégica de operações</p> <br> <p> <a href="#-sobre-o-projeto">Sobre</a> • <a href="#-funcionalidades">Funcionalidades</a> • <a href="#-instalação">Instalação</a> • <a href="#-deploy-no-railway">Deploy</a> • <a href="#-licença">Licença</a> </p> <br> </div> ```
+- O banco legado do Streamlit (`db.sqlite`) foi preservado.
+- O Django usa por padrao `db.sqlite3` para evitar conflito de schema.
+- O arquivo `app.py` antigo permanece no repositorio apenas como referencia.

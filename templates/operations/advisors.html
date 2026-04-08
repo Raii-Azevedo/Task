@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Advisors | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <p class="eyebrow">Senior advisors</p>
+        <h1>Rede de especialistas para apoiar a estrategia.</h1>
+    </div>
+    <form method="get" class="search-form">
+        <input type="search" name="q" value="{{ query }}" placeholder="Buscar por nome, expertise, empresa ou notas">
+        <button type="submit">Buscar</button>
+    </form>
+</section>
+
+<section class="layout-two">
+    <article class="panel sticky-panel">
+        <div class="panel-head">
+            <h2>Novo advisor</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Salvar advisor</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Mapa de influencia</h2>
+        </div>
+        <div class="card-grid">
+            {% for advisor in advisors %}
+                <div class="content-card">
+                    <h3>{{ advisor.name }}</h3>
+                    <p>{{ advisor.expertise|default:'Expertise nao informada.' }}</p>
+                    <div class="meta-line">
+                        <span>{{ advisor.company|default:'Empresa nao informada' }}</span>
+                        <span>{{ advisor.status }}</span>
+                    </div>
+                    {% if advisor.linkedin %}
+                        <a href="{{ advisor.linkedin }}" target="_blank" rel="noreferrer" class="inline-link">Abrir LinkedIn</a>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhum advisor encontrado.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

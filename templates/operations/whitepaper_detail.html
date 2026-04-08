@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ whitepaper.title }} | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head compact">
+    <div>
+        <p class="eyebrow">Whitepaper</p>
+        <h1>{{ whitepaper.title }}</h1>
+        <p class="lead">{{ whitepaper.description|default:whitepaper.topic|default:'Documento tecnico sem resumo.' }}</p>
+    </div>
+    <a class="button-link" href="{% url 'whitepaper_list' %}">Voltar a lista</a>
+</section>
+
+<section class="layout-two detail-layout">
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Resumo editorial</h2>
+        </div>
+        <div class="detail-grid">
+            <div>
+                <span class="detail-label">Status</span>
+                <strong>{{ whitepaper.get_status_display }}</strong>
+            </div>
+            <div>
+                <span class="detail-label">Progresso</span>
+                <strong>{{ whitepaper.progress }}%</strong>
+            </div>
+            <div>
+                <span class="detail-label">Autor</span>
+                <strong>{{ whitepaper.author_name|default:'Nao informado' }}</strong>
+            </div>
+            <div>
+                <span class="detail-label">Publicacao</span>
+                <strong>{% if whitepaper.published_date %}{{ whitepaper.published_date|date:'d/m/Y' }}{% else %}Pendente{% endif %}</strong>
+            </div>
+        </div>
+        <div class="tag-row spacious">
+            {% for tag in whitepaper.tag_list %}<span>{{ tag }}</span>{% empty %}<span>Sem tags</span>{% endfor %}
+        </div>
+        {% if whitepaper.content %}
+            <div class="rich-block">{{ whitepaper.content|linebreaks }}</div>
+        {% endif %}
+        {% if whitepaper.document_link %}
+            <a href="{{ whitepaper.document_link }}" target="_blank" rel="noreferrer" class="inline-link">Abrir documento</a>
+        {% endif %}
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Editar whitepaper</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="update_whitepaper">Salvar alteracoes</button>
+        </form>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-head">
+        <h2>Comentarios</h2>
+    </div>
+    <form method="post" class="stack-form slim-form">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit" name="add_comment">Adicionar comentario</button>
+    </form>
+    <div class="comment-stack">
+        {% for comment in whitepaper.comments.all %}
+            <div class="comment-card">
+                <strong>{{ comment.user_name }}</strong>
+                <span>{{ comment.created_at|date:'d/m/Y H:i' }}</span>
+                <p>{{ comment.text }}</p>
+            </div>
+        {% empty %}
+            <p class="empty-state">Nenhum comentario ainda.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

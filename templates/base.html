@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}TaskSync{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'operations/styles.css' %}">
+</head>
+<body>
+    <div class="shell">
+        <aside class="sidebar">
+            <a class="brand" href="{% url 'dashboard' %}">
+                <span class="brand-mark">TS</span>
+                <div>
+                    <strong>TaskSync</strong>
+                    <span>Operations Strategy</span>
+                </div>
+            </a>
+
+            <nav class="nav-group">
+                <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+                <a href="{% url 'task_board' %}" class="{% if request.resolver_match.url_name == 'task_board' or request.resolver_match.url_name == 'task_detail' %}active{% endif %}">Kanban</a>
+                <a href="{% url 'event_list' %}" class="{% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Eventos</a>
+                <a href="{% url 'whitepaper_list' %}" class="{% if request.resolver_match.url_name == 'whitepaper_list' or request.resolver_match.url_name == 'whitepaper_detail' or request.resolver_match.url_name == 'glossary_list' or request.resolver_match.url_name == 'case_study_list' %}active{% endif %}">Knowledge Base</a>
+                <a href="{% url 'company_list' %}" class="{% if request.resolver_match.url_name == 'company_list' %}active{% endif %}">Empresas</a>
+                <a href="{% url 'advisor_list' %}" class="{% if request.resolver_match.url_name == 'advisor_list' %}active{% endif %}">Advisors</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>TaskSync v4.0</p>
+                <p>Migrado para Django</p>
+            </div>
+        </aside>
+
+        <main class="content">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message {{ message.tags|default:'info' }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

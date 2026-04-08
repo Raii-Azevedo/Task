@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Whitepapers | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head knowledge-head">
+    <div>
+        <p class="eyebrow">Knowledge base</p>
+        <h1>Whitepapers, glossario e cases em paginas separadas e editaveis.</h1>
+    </div>
+    <div class="subnav">
+        <a class="active" href="{% url 'whitepaper_list' %}">Whitepapers</a>
+        <a href="{% url 'glossary_list' %}">Glossario</a>
+        <a href="{% url 'case_study_list' %}">Case studies</a>
+    </div>
+</section>
+
+<section class="page-head compact second-row">
+    <form method="get" class="search-form inline-filters">
+        <input type="search" name="q" value="{{ query }}" placeholder="Buscar por titulo, topico ou autor">
+        <select name="status">
+            <option value="">Todos os status</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+</section>
+
+<section class="layout-two">
+    <article class="panel sticky-panel">
+        <div class="panel-head">
+            <h2>Novo whitepaper</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="create_whitepaper">Salvar whitepaper</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Biblioteca tecnica</h2>
+        </div>
+        <div class="card-grid">
+            {% for whitepaper in whitepapers %}
+                <div class="content-card">
+                    <div class="badge-row">
+                        <span class="pill neutral">{{ whitepaper.get_status_display }}</span>
+                        <span class="pill accent">{{ whitepaper.progress }}%</span>
+                    </div>
+                    <h3>{{ whitepaper.title }}</h3>
+                    <p>{{ whitepaper.topic|default:'Sem topico' }}</p>
+                    <div class="progress-line"><span style="width: {{ whitepaper.progress }}%"></span></div>
+                    <div class="meta-line">
+                        <span>{{ whitepaper.author_name|default:'Autor nao informado' }}</span>
+                        <span>{% if whitepaper.published_date %}{{ whitepaper.published_date|date:'d/m/Y' }}{% else %}Nao publicado{% endif %}</span>
+                    </div>
+                    <div class="action-row">
+                        <a href="{% url 'whitepaper_detail' whitepaper.pk %}">Abrir</a>
+                        <form method="post" action="{% url 'delete_whitepaper' whitepaper.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="ghost danger">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhum whitepaper encontrado.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

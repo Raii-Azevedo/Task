@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Empresas | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <p class="eyebrow">Empresas target</p>
+        <h1>Pipeline comercial e de relacionamento com foco em operacoes.</h1>
+    </div>
+    <form method="get" class="search-form">
+        <input type="search" name="q" value="{{ query }}" placeholder="Buscar por nome, industria, status, contato ou notas">
+        <button type="submit">Buscar</button>
+    </form>
+</section>
+
+<section class="layout-two">
+    <article class="panel sticky-panel">
+        <div class="panel-head">
+            <h2>Nova empresa</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Salvar empresa</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Pipeline</h2>
+        </div>
+        <div class="card-grid">
+            {% for company in companies %}
+                <div class="content-card">
+                    <div class="badge-row">
+                        <span class="pill neutral">{{ company.status }}</span>
+                        <span class="pill accent">{{ company.industry|default:'sem industria' }}</span>
+                    </div>
+                    <h3>{{ company.name }}</h3>
+                    <p>{{ company.notes|default:'Sem observacoes.' }}</p>
+                    <div class="meta-line">
+                        <span>{{ company.contact_person|default:'Contato nao definido' }}</span>
+                        <span>{{ company.potential_value|default:'Valor nao definido' }}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhuma empresa encontrada.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Glossario | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head knowledge-head">
+    <div>
+        <p class="eyebrow">Knowledge base</p>
+        <h1>Glossario do setor para alinhar linguagem e contexto.</h1>
+    </div>
+    <div class="subnav">
+        <a href="{% url 'whitepaper_list' %}">Whitepapers</a>
+        <a class="active" href="{% url 'glossary_list' %}">Glossario</a>
+        <a href="{% url 'case_study_list' %}">Case studies</a>
+    </div>
+</section>
+
+<section class="layout-two">
+    <article class="panel sticky-panel">
+        <div class="panel-head">
+            <h2>Novo termo</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Salvar termo</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Base conceitual</h2>
+            <form method="get" class="search-form compact-search">
+                <input type="search" name="q" value="{{ query }}" placeholder="Buscar termo, definicao, categoria ou exemplo">
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+        <div class="card-grid">
+            {% for term in terms %}
+                <div class="content-card">
+                    <p class="pill neutral">{{ term.category|default:'sem categoria' }}</p>
+                    <h3>{{ term.term }}</h3>
+                    <p>{{ term.definition }}</p>
+                    {% if term.example %}<p class="muted">Exemplo: {{ term.example }}</p>{% endif %}
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhum termo encontrado.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}
