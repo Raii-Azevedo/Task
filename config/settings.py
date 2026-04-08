@@ -10,9 +10,20 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _get_csv_env(name, default=""):
+    return [item.strip() for item in os.getenv(name, default).split(",") if item.strip()]
+
+
+def _get_origin_env(name, default=""):
+    return [origin for origin in _get_csv_env(name, default) if origin.startswith(("http://", "https://"))]
+
+
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-tasksync-dev-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
-ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,tasksyncs.up.railway.app, .railway.app").split(",") if host.strip()]
+ALLOWED_HOSTS = _get_csv_env(
+    "ALLOWED_HOSTS",
+    "127.0.0.1,localhost,tasksyncs.up.railway.app,.railway.app",
+)
 
 
 # Application definition
@@ -126,12 +137,7 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
-
-# Configure o CSRF para confiar no seu domínio do Railway
-CSRF_TRUSTED_ORIGINS = [
-    'https://tasksyncs.up.railway.app',
-    'http://tasksyncs.up.railway.app',
-]
-
-# Se quiser usar variável de ambiente (recomendado)
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+CSRF_TRUSTED_ORIGINS = _get_origin_env(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://tasksyncs.up.railway.app,http://tasksyncs.up.railway.app',
+)
