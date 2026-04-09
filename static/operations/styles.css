@@ -171,13 +171,20 @@ form p {
     padding: 2rem;
 }
 
-.auth-messages {
+.auth-stack {
     width: min(100%, 520px);
+    display: grid;
+    justify-items: center;
+    margin-inline: auto;
+}
+
+.auth-messages {
+    width: 100%;
     margin-bottom: 1rem;
 }
 
 .auth-card {
-    width: min(100%, 520px);
+    width: 100%;
     padding: 2rem;
     border-radius: 28px;
     background: var(--panel-strong);
