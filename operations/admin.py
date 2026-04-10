@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import (
 	AuthorizedEmail,
 	CaseStudy,
+	Deck,
 	Event,
 	GlossaryTerm,
 	SeniorAdvisor,
@@ -52,6 +53,13 @@ class WhitepaperAdmin(admin.ModelAdmin):
 class WhitepaperCommentAdmin(admin.ModelAdmin):
 	list_display = ("whitepaper", "user_name", "created_at")
 	search_fields = ("whitepaper__title", "user_name", "text")
+
+
+@admin.register(Deck)
+class DeckAdmin(admin.ModelAdmin):
+	list_display = ("name", "category", "source_name", "created_at")
+	list_filter = ("category",)
+	search_fields = ("name", "source_name", "tags", "notes")
 
 
 @admin.register(GlossaryTerm)

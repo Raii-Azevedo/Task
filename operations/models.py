@@ -172,6 +172,29 @@ class WhitepaperComment(TimestampedModel):
 		return f"{self.user_name}: {self.whitepaper.title}"
 
 
+class Deck(TimestampedModel):
+	class Category(models.TextChoices):
+		PITCH = "pitch", "Pitch"
+		PROPOSAL = "proposal", "Proposal"
+		REPORT = "report", "Report"
+		REFERENCE = "reference", "Reference"
+		OTHER = "other", "Other"
+
+	name = models.CharField(max_length=255)
+	document_link = models.URLField()
+	category = models.CharField(max_length=100, choices=Category.choices, default=Category.PITCH)
+	source_name = models.CharField(max_length=255, blank=True)
+	tags = models.CharField(max_length=255, blank=True)
+	notes = models.TextField(blank=True)
+
+	class Meta:
+		db_table = "decks"
+		ordering = ["name"]
+
+	def __str__(self):
+		return self.name
+
+
 class GlossaryTerm(TimestampedModel):
 	class Category(models.TextChoices):
 		TECHNICAL = "technical", "Technical"

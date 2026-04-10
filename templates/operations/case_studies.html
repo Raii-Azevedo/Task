@@ -10,6 +10,7 @@
     </div>
     <div class="subnav">
         <a href="{% url 'whitepaper_list' %}">Whitepapers</a>
+        <a href="{% url 'deck_list' %}">Deck</a>
         <a href="{% url 'glossary_list' %}">Glossario</a>
         <a class="active" href="{% url 'case_study_list' %}">Case studies</a>
     </div>
@@ -44,9 +45,19 @@
                     </div>
                     <h3>{{ case.title }}</h3>
                     <p>{{ case.summary }}</p>
+                    {% if case.document_link %}
+                        <p><a href="{{ case.document_link }}" target="_blank" rel="noopener noreferrer">Abrir link do case</a></p>
+                    {% endif %}
                     <div class="meta-line">
                         <span>{{ case.author|default:'Autor nao informado' }}</span>
                         <span>{{ case.created_at|date:'d/m/Y' }}</span>
+                    </div>
+                    <div class="action-row">
+                        <a href="{% url 'case_study_detail' case.pk %}">Editar</a>
+                        <form method="post" action="{% url 'delete_case_study' case.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="ghost danger">Excluir</button>
+                        </form>
                     </div>
                 </div>
             {% empty %}

@@ -3,6 +3,7 @@ from django import forms
 from .models import (
     AuthorizedEmail,
     CaseStudy,
+    Deck,
     Event,
     GlossaryTerm,
     SeniorAdvisor,
@@ -116,6 +117,16 @@ class WhitepaperCommentForm(forms.ModelForm):
         }
 
 
+class DeckForm(forms.ModelForm):
+    class Meta:
+        model = Deck
+        fields = ["name", "document_link", "category", "source_name", "tags", "notes"]
+        widgets = {
+            "document_link": forms.URLInput(attrs={"placeholder": "https://example.com/documento"}),
+            "notes": forms.Textarea(attrs={"rows": 3}),
+        }
+
+
 class GlossaryTermForm(forms.ModelForm):
     class Meta:
         model = GlossaryTerm
@@ -128,9 +139,10 @@ class GlossaryTermForm(forms.ModelForm):
 class CaseStudyForm(forms.ModelForm):
     class Meta:
         model = CaseStudy
-        fields = ["title", "category", "summary", "author", "content", "is_published"]
+        fields = ["title", "category", "summary", "author", "document_link", "content", "is_published"]
         widgets = {
             "summary": forms.Textarea(attrs={"rows": 4}),
+            "document_link": forms.URLInput(attrs={"placeholder": "https://example.com/case"}),
             "content": forms.Textarea(attrs={"rows": 6}),
         }
 

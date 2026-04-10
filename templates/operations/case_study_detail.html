@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ case.title }} | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head compact">
+    <div>
+        <p class="eyebrow">Case study</p>
+        <h2>{{ case.title }}</h2>
+        <p class="lead">{{ case.summary }}</p>
+    </div>
+    <a class="button-link" href="{% url 'case_study_list' %}">Voltar a lista</a>
+</section>
+
+<section class="layout-two detail-layout">
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Visao geral</h2>
+        </div>
+        <div class="detail-grid">
+            <div>
+                <span class="detail-label">Categoria</span>
+                <strong>{{ case.get_category_display }}</strong>
+            </div>
+            <div>
+                <span class="detail-label">Status</span>
+                <strong>{% if case.is_published %}Publicado{% else %}Rascunho{% endif %}</strong>
+            </div>
+            <div>
+                <span class="detail-label">Autor</span>
+                <strong>{{ case.author|default:'Nao informado' }}</strong>
+            </div>
+            <div>
+                <span class="detail-label">Criado em</span>
+                <strong>{{ case.created_at|date:'d/m/Y' }}</strong>
+            </div>
+        </div>
+        {% if case.content %}
+            <div class="rich-block">{{ case.content|linebreaks }}</div>
+        {% endif %}
+        {% if case.document_link %}
+            <a href="{{ case.document_link }}" target="_blank" rel="noreferrer" class="inline-link">Abrir documento</a>
+        {% endif %}
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Editar case</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="update_case">Salvar alteracoes</button>
+        </form>
+        <form method="post" action="{% url 'delete_case_study' case.pk %}" class="stack-form slim-form">
+            {% csrf_token %}
+            <button type="submit" class="ghost danger">Excluir case</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

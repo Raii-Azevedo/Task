@@ -23,7 +23,7 @@
                     <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
                     <a href="{% url 'task_board' %}" class="{% if request.resolver_match.url_name == 'task_board' or request.resolver_match.url_name == 'task_detail' %}active{% endif %}">Kanban</a>
                     <a href="{% url 'event_list' %}" class="{% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Eventos</a>
-                    <a href="{% url 'whitepaper_list' %}" class="{% if request.resolver_match.url_name == 'whitepaper_list' or request.resolver_match.url_name == 'whitepaper_detail' or request.resolver_match.url_name == 'glossary_list' or request.resolver_match.url_name == 'case_study_list' %}active{% endif %}">Knowledge Base</a>
+                    <a href="{% url 'whitepaper_list' %}" class="{% if request.resolver_match.url_name == 'whitepaper_list' or request.resolver_match.url_name == 'whitepaper_detail' or request.resolver_match.url_name == 'deck_list' or request.resolver_match.url_name == 'glossary_list' or request.resolver_match.url_name == 'case_study_list' %}active{% endif %}">Knowledge Base</a>
                     <a href="{% url 'company_list' %}" class="{% if request.resolver_match.url_name == 'company_list' %}active{% endif %}">Empresas</a>
                     <a href="{% url 'advisor_list' %}" class="{% if request.resolver_match.url_name == 'advisor_list' %}active{% endif %}">Advisors</a>
                 </nav>

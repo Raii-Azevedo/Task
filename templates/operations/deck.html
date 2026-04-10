@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Deck | TaskSync{% endblock %}
+
+{% block content %}
+<section class="page-head knowledge-head">
+    <div>
+        <p class="eyebrow">Knowledge base</p>
+        <h3>Decks e documentos externos</h3>
+    </div>
+    <div class="subnav">
+        <a href="{% url 'whitepaper_list' %}">Whitepapers</a>
+        <a class="active" href="{% url 'deck_list' %}">Deck</a>
+        <a href="{% url 'glossary_list' %}">Glossario</a>
+        <a href="{% url 'case_study_list' %}">Case studies</a>
+    </div>
+</section>
+
+<section class="page-head compact second-row">
+    <form method="get" class="search-form inline-filters">
+        <input type="search" name="q" value="{{ query }}" placeholder="Buscar por nome, origem, tags ou anotacoes">
+        <select name="category">
+            <option value="">Todas as categorias</option>
+            {% for value, label in category_choices %}
+                <option value="{{ value }}" {% if category_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+</section>
+
+<section class="layout-two">
+    <article class="panel sticky-panel">
+        <div class="panel-head">
+            <h2>Novo deck</h2>
+        </div>
+        <form method="post" class="stack-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Salvar deck</button>
+        </form>
+    </article>
+
+    <article class="panel">
+        <div class="panel-head">
+            <h2>Links cadastrados</h2>
+        </div>
+        <div class="card-grid">
+            {% for deck in decks %}
+                <div class="content-card">
+                    <p class="pill neutral">{{ deck.get_category_display }}</p>
+                    <h3>{{ deck.name }}</h3>
+                    <p>{{ deck.source_name|default:'Origem nao informada' }}</p>
+                    {% if deck.tags %}<p class="muted">Tags: {{ deck.tags }}</p>{% endif %}
+                    {% if deck.notes %}<p>{{ deck.notes }}</p>{% endif %}
+                    <div class="meta-line">
+                        <span>{{ deck.created_at|date:'d/m/Y' }}</span>
+                        <a href="{{ deck.document_link }}" target="_blank" rel="noopener noreferrer">Abrir documento</a>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="empty-state">Nenhum deck encontrado.</p>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+{% endblock %}

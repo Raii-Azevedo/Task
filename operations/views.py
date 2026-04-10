@@ -11,6 +11,7 @@ from django.views.generic.edit import FormView
 from .forms import (
 	CaseStudyForm,
 	CorporateEmailAuthenticationForm,
+	DeckForm,
 	EventForm,
 	GlossaryTermForm,
 	SeniorAdvisorForm,
@@ -20,7 +21,7 @@ from .forms import (
 	WhitepaperCommentForm,
 	WhitepaperForm,
 )
-from .models import CaseStudy, Event, GlossaryTerm, SeniorAdvisor, TargetCompany, Task, Whitepaper
+from .models import CaseStudy, Deck, Event, GlossaryTerm, SeniorAdvisor, TargetCompany, Task, Whitepaper
 
 
 class CorporateLoginView(FormView):
@@ -286,6 +287,38 @@ def whitepaper_detail(request, pk):
 	return render(request, "operations/whitepaper_detail.html", context)
 
 
+def deck_list(request):
+	form = DeckForm(prefix="deck")
+	if request.method == "POST":
+		form = DeckForm(request.POST, prefix="deck")
+		if form.is_valid():
+			form.save()
+			messages.success(request, "Deck cadastrado.")
+			return redirect("deck_list")
+
+	query = request.GET.get("q", "").strip()
+	category_filter = request.GET.get("category", "")
+	decks = Deck.objects.all()
+	if query:
+		decks = decks.filter(
+			Q(name__icontains=query)
+			| Q(source_name__icontains=query)
+			| Q(tags__icontains=query)
+			| Q(notes__icontains=query)
+		)
+	if category_filter:
+		decks = decks.filter(category=category_filter)
+
+	context = {
+		"form": form,
+		"decks": decks,
+		"query": query,
+		"category_filter": category_filter,
+		"category_choices": Deck.Category.choices,
+	}
+	return render(request, "operations/deck.html", context)
+
+
 def delete_whitepaper(request, pk):
 	whitepaper = get_object_or_404(Whitepaper, pk=pk)
 	if request.method == "POST":
@@ -316,6 +349,28 @@ def glossary_list(request):
 	return render(request, "operations/glossary.html", {"form": form, "terms": terms, "query": query})
 
 
+def glossary_detail(request, pk):
+	term = get_object_or_404(GlossaryTerm, pk=pk)
+	form = GlossaryTermForm(instance=term, prefix="edit")
+
+	if request.method == "POST" and "update_term" in request.POST:
+		form = GlossaryTermForm(request.POST, instance=term, prefix="edit")
+		if form.is_valid():
+			form.save()
+			messages.success(request, "Termo atualizado.")
+			return redirect("glossary_detail", pk=term.pk)
+
+	return render(request, "operations/glossary_detail.html", {"term": term, "form": form})
+
+
+def delete_glossary_term(request, pk):
+	term = get_object_or_404(GlossaryTerm, pk=pk)
+	if request.method == "POST":
+		term.delete()
+		messages.success(request, "Termo excluido.")
+	return redirect("glossary_list")
+
+
 def case_study_list(request):
 	form = CaseStudyForm(prefix="case")
 	if request.method == "POST":
@@ -336,6 +391,28 @@ def case_study_list(request):
 		)
 
 	return render(request, "operations/case_studies.html", {"form": form, "cases": cases, "query": query})
+
+
+def case_study_detail(request, pk):
+	case = get_object_or_404(CaseStudy, pk=pk, type="case_study")
+	form = CaseStudyForm(instance=case, prefix="edit")
+
+	if request.method == "POST" and "update_case" in request.POST:
+		form = CaseStudyForm(request.POST, instance=case, prefix="edit")
+		if form.is_valid():
+			form.save()
+			messages.success(request, "Case study atualizado.")
+			return redirect("case_study_detail", pk=case.pk)
+
+	return render(request, "operations/case_study_detail.html", {"case": case, "form": form})
+
+
+def delete_case_study(request, pk):
+	case = get_object_or_404(CaseStudy, pk=pk, type="case_study")
+	if request.method == "POST":
+		case.delete()
+		messages.success(request, "Case study excluido.")
+	return redirect("case_study_list")
 
 
 def company_list(request):
