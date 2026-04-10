@@ -40,6 +40,9 @@
                         <span>{{ event.location|default:'Local a definir' }}</span>
                         <span>{% if event.start_date %}{{ event.start_date|date:'d/m/Y' }}{% else %}Sem data{% endif %}</span>
                     </div>
+                    {% if event.event_link %}
+                        <p><a href="{{ event.event_link }}" target="_blank" rel="noopener noreferrer">Link do Evento</a></p>
+                    {% endif %}
                 </div>
             {% empty %}
                 <p class="empty-state">Nenhum evento encontrado.</p>

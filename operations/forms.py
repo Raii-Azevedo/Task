@@ -75,10 +75,11 @@ class TaskCommentForm(forms.ModelForm):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ["name", "description", "event_type", "start_date", "location"]
+        fields = ["name", "description", "event_type", "start_date", "location", "event_link"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 3}),
             "start_date": DateInput(),
+            "event_link": forms.URLInput(attrs={"placeholder": "https://example.com/evento"}),
         }
 
 
